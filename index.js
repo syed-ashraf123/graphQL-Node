@@ -1,23 +1,11 @@
 const express = require("express");
 const { buildSchema } = require("graphql");
 const { graphqlHTTP } = require("express-graphql");
-const Axios = require("axios");
 const app = express();
 
-//Database
-let msg = "THis is database";
+let database = "This is my current Database";
 
-//For hello query we are returning just a string
-//Welcome query will accept an argument
-//Exclamation mark means required
 const schema = buildSchema(`
-type Post{
-    userId:Int
-    id:Int
-    title:String
-    body:String
-}
-
 
 type User{
     name:String
@@ -25,72 +13,51 @@ type User{
     college:String
 }
 
-
-type Query {
-    hello:String!
-    welcomeMessage(name:String,age:Int!):String
+type Query{
+    hello:String
+    welcomeMessage(name:String,age:Int):String
     getUser:User
     getUsers:[User]
-    getPosts:[Post]
 }
-input UserInput{
-    name:String!
-    age:Int!
-    college:String!
-}
+
 type Mutation{
-setMessage(newMessage:String):String
-createUser(user:UserInput):User
+    update(message:String):String!
 }
+
 `);
 
 //Resolvers
-//What to return for hello query
 const root = {
   hello: () => {
     return "Hello World";
   },
   welcomeMessage: (args) => {
-    console.log(args);
-    return `WElcome ${args.name} ${args.age}`;
+    return `Name is ${args.name} & Age is ${args.age}`;
   },
   getUser: () => {
     return {
-      name: "Zanoe",
-      age: 45,
+      name: "Zano",
+      age: 24,
       college: "IUL",
     };
   },
   getUsers: () => {
     return [
       {
-        name: "Zanoe",
-        age: 45,
+        name: "Zano",
+        age: 24,
         college: "IUL",
       },
       {
-        name: "Zanoe",
-        age: 25,
-        college: "IUL",
+        name: "Codes",
+        age: 20,
+        college: "UJU",
       },
     ];
   },
-  getPosts: async () => {
-    const res = await Axios("https://jsonplaceholder.typicode.com/posts");
-    return res.data;
-  },
-  setMessage: ({ newMessage }) => {
-    console.log(newMessage);
-    message = newMessage;
-    return message;
-  },
-  //For Mutation of with Objects instead args do this.
-  //craeteUser(user:{
-  //       name:"ok",
-  //       age:99
-  //   })
-  createUser: (args) => {
-    return args.user;
+  update: (args) => {
+    database = args.message;
+    return null;
   },
 };
 
@@ -103,4 +70,4 @@ app.use(
   })
 );
 
-app.listen(4000, () => console.log("Server up and Running"));
+app.listen(4000, () => console.log("Up & Running *4000"));
